@@ -4,6 +4,7 @@ var eslint = require('eslint');
 var chalk = require('chalk');
 var _ = require('lodash');
 var path = require('path');
+var childProcess = require('child_process');
 
 var success = require('./formatters/helpers/success');
 var formatter = require('./formatters/simple-detail');
@@ -71,8 +72,14 @@ module.exports = function watcher(options) {
   chokidar.watch(options._, chokidarOptions)
     .on(events.change, function (path) {
       logger.debug('Changed:', path);
-      if (!cli.isPathIgnored(path) && isWatchableExtension(path, options.ext)) {
-        lintFile(path);
+      if (!cli.isPathIgnored(path) && isWatchableExtension(path, options.ext)) {        
+        childProcess.exec('clear', function (error, stdout, stderr) {
+          stdout && console.log(stdout);
+          if (error !== null) {
+            console.log('exec error: ' + error);
+          }
+          lintFile(path);
+        });
       }
     }).on('error', logger.error);
 

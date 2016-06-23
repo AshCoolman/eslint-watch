@@ -9,6 +9,7 @@ var watcher = require('./watcher');
 var argParser = require('./arg-parser');
 var logger = require('./log')('esw-cli');
 var pkg = require('../package');
+var childProcess = require('child_process');
 
 logger.debug('Loaded');
 logger.debug('Eslint-Watch: ' + pkg.version);
@@ -29,6 +30,16 @@ function runLint(args, options){
     exitCode = 1;
   });
   return child;
+}
+
+function runLint(args, options){
+  childProcess.exec('clear', function (error, stdout, stderr) {
+    stdout && console.log(stdout);
+    if (error !== null) {
+      console.log('exec error: ' + error);
+    }
+    lintFile(args, options);
+  });
 }
 
 function keyListener(args, options){
